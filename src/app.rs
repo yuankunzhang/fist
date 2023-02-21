@@ -1,6 +1,7 @@
 use eframe::App;
+use std::sync::mpsc::{sync_channel, Receiver, SyncSender};
 
-pub struct LsofOptions {
+struct LsofOptions {
     regular: bool,
     directory: bool,
     block_special: bool,
@@ -22,14 +23,18 @@ impl Default for LsofOptions {
 
 pub struct ShowOffApp {
     options: LsofOptions,
-    open_files: OpenFilesApp,
+    open_files: OpenFilesWindow,
+    tx: SyncSender<String>,
 }
 
 impl ShowOffApp {
     pub fn new(_cc: &eframe::CreationContext) -> Self {
+        let (tx, rx) = sync_channel(1);
+
         Self {
+            tx,
             options: LsofOptions::default(),
-            open_files: OpenFilesApp {},
+            open_files: OpenFilesWindow::new(rx),
         }
     }
 
@@ -75,12 +80,21 @@ impl eframe::App for ShowOffApp {
     }
 }
 
-pub struct OpenFilesApp {}
+struct OpenFilesWindow {
+    rx: Receiver<String>,
+}
 
-impl eframe::App for OpenFilesApp {
+impl eframe::App for OpenFilesWindow {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.label("Open Files");
         });
+    }
+}
+
+impl OpenFilesWindow {
+    fn new(rx: Receiver<String>) -> Self {
+        println!("new OpenFilesWindow");
+        Self { rx }
     }
 }

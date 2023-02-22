@@ -1,4 +1,6 @@
 use eframe::App;
+use egui::CollapsingHeader;
+use egui_extras::{Column, TableBuilder};
 use std::sync::mpsc::{sync_channel, Receiver, SyncSender};
 
 struct LsofOptions {
@@ -87,14 +89,44 @@ struct OpenFilesWindow {
 impl eframe::App for OpenFilesWindow {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
-            ui.label("Open Files");
+            CollapsingHeader::new("Process1")
+                .default_open(true)
+                .show(ui, |ui| {
+                    let table = TableBuilder::new(ui)
+                        .striped(true)
+                        .cell_layout(egui::Layout::left_to_right(egui::Align::Center))
+                        .column(Column::auto());
+
+                    table.body(|mut body| {
+                        body.row(20.0, |mut row| {
+                            row.col(|ui| {
+                                ui.label("File1");
+                            });
+                        });
+                        body.row(20.0, |mut row| {
+                            row.col(|ui| {
+                                ui.label("File2");
+                            });
+                        });
+                        body.row(20.0, |mut row| {
+                            row.col(|ui| {
+                                ui.label("File3");
+                            });
+                        });
+                    })
+                });
+
+            CollapsingHeader::new("Process2")
+                .default_open(true)
+                .show(ui, |ui| {
+                    ui.label("File1");
+                });
         });
     }
 }
 
 impl OpenFilesWindow {
     fn new(rx: Receiver<String>) -> Self {
-        println!("new OpenFilesWindow");
         Self { rx }
     }
 }

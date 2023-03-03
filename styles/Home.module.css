@@ -3,8 +3,12 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  padding: 6rem;
+  padding: 0rem;
   min-height: 100vh;
+}
+
+.table {
+  width: 100%;
 }
 
 .description {

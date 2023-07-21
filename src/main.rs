@@ -1,8 +1,11 @@
 use fist::Fist;
 
 fn main() {
-    let flist = Fist::new();
-    flist.run();
+    let fist = Fist::new();
+    let files = fist.run();
+    for file in files {
+        println!("{}", file.to_string());
+    }
     // let me = procfs::process::Process::myself().unwrap();
     // let me_stat = me.stat().unwrap();
     // let tps = procfs::ticks_per_second();
